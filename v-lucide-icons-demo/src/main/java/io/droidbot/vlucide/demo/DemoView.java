@@ -1,8 +1,10 @@
 package io.droidbot.vlucide.demo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -20,67 +22,85 @@ public class DemoView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String[][] PRESET_COLORS = {
+		{ "Default", "" },
+		{ "Black", "#000000" },
+		{ "White", "#ffffff" },
+		{ "Red", "#ef4444" },
+		{ "Orange", "#f97316" },
+		{ "Amber", "#f59e0b" },
+		{ "Yellow", "#eab308" },
+		{ "Lime", "#84cc16" },
+		{ "Green", "#22c55e" },
+		{ "Emerald", "#10b981" },
+		{ "Teal", "#14b8a6" },
+		{ "Cyan", "#06b6d4" },
+		{ "Sky", "#0ea5e9" },
+		{ "Blue", "#3b82f6" },
+		{ "Indigo", "#6366f1" },
+		{ "Violet", "#8b5cf6" },
+		{ "Purple", "#a855f7" },
+		{ "Fuchsia", "#d946ef" },
+		{ "Pink", "#ec4899" },
+		{ "Rose", "#f43f5e" }
+	};
+
 	private final List<LucideSvgIcon> icons = new ArrayList<>();
+	private boolean darkTheme = false;
 
 	public DemoView() {
 		setSpacing(false);
 		setPadding(true);
 		setWidthFull();
 
-		add(new H2("Lucide Icons for Vaadin — All Icons"));
+		add(new H2("Lucide Icons for Vaadin"));
 
 		var controls = new HorizontalLayout();
+		controls.addClassName("controls-bar");
+		controls.setWidthFull();
 		controls.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.BASELINE);
-		controls.setSpacing(true);
-		controls.getStyle().set("margin-bottom", "16px");
 
-		var colorField = new TextField("Color (hex)");
-		colorField.setPattern("^#[0-9a-fA-F]{6}$");
-		colorField.setValue("#000000");
-		colorField.setWidth("160px");
+		var colorSelect = new Select<String>();
+		colorSelect.setLabel("Color");
+		var colorLabels = Arrays.stream(PRESET_COLORS)
+			.map(pair -> pair[0])
+			.toArray(String[]::new);
+		colorSelect.setItems(colorLabels);
+		colorSelect.setValue("Black");
+
+		var sizeField = new TextField("Size");
+		sizeField.setValue("24px");
+		sizeField.setWidth("100px");
 
 		var strokeSelect = new Select<Double>();
-		strokeSelect.setLabel("Stroke Width");
+		strokeSelect.setLabel("Stroke");
 		strokeSelect.setItems(0.5, 1.0, 1.5, 2.0, 3.0, 4.0);
 		strokeSelect.setValue(2.0);
 
-		var sizeSelect = new Select<String>();
-		sizeSelect.setLabel("Size");
-		sizeSelect.setItems("16px", "24px", "32px", "48px", "64px");
-		sizeSelect.setValue("24px");
+		var themeToggle = new Button("Dark Mode");
+		themeToggle.addClassName("theme-toggle");
+		themeToggle.addClickListener(e -> toggleTheme(themeToggle));
 
-		controls.add(colorField, strokeSelect, sizeSelect);
+		controls.add(colorSelect, sizeField, strokeSelect, themeToggle);
 		add(controls);
 
 		var grid = new HorizontalLayout();
-		grid.setWidthFull();
-		grid.getStyle().set("flex-wrap", "wrap");
-		grid.getStyle().set("gap", "4px");
-		grid.getStyle().set("display", "flex");
+		grid.addClassName("icon-grid");
 
 		for (LucideIcon icon : LucideIcon.values()) {
 			var svgIcon = icon.create();
-			svgIcon.setSize(sizeSelect.getValue());
-			svgIcon.setColor(colorField.getValue());
+			svgIcon.setSize(sizeField.getValue());
+			svgIcon.setColor(resolveColor(colorSelect.getValue()));
 			svgIcon.setStrokeWidth(strokeSelect.getValue());
 			icons.add(svgIcon);
 
 			var card = new VerticalLayout();
+			card.addClassName("icon-card");
 			card.setSpacing(false);
 			card.setPadding(false);
-			card.setWidth("120px");
-			card.setHeight("90px");
-			card.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
-			card.getStyle().set("border", "1px solid #e0e0e0");
-			card.getStyle().set("border-radius", "8px");
-			card.getStyle().set("padding", "8px");
-			card.getStyle().set("box-sizing", "border-box");
 
 			var name = new Span(formatName(icon.name()));
-			name.getStyle().set("font-size", "10px");
-			name.getStyle().set("text-align", "center");
-			name.getStyle().set("line-height", "1.2");
-			name.setWidthFull();
+			name.addClassName("icon-name");
 
 			card.add(svgIcon, name);
 			grid.add(card);
@@ -88,11 +108,18 @@ public class DemoView extends VerticalLayout {
 
 		add(grid);
 
-		colorField.addValueChangeListener(e -> {
+		colorSelect.addValueChangeListener(e -> {
+			var color = resolveColor(e.getValue());
+			for (var icon : icons) {
+				icon.setColor(color);
+			}
+		});
+
+		sizeField.addValueChangeListener(e -> {
 			var val = e.getValue();
-			if (val != null && val.matches("^#[0-9a-fA-F]{6}$")) {
+			if (val != null && !val.isBlank()) {
 				for (var icon : icons) {
-					icon.setColor(val);
+					icon.setSize(val);
 				}
 			}
 		});
@@ -102,12 +129,29 @@ public class DemoView extends VerticalLayout {
 				icon.setStrokeWidth(e.getValue());
 			}
 		});
+	}
 
-		sizeSelect.addValueChangeListener(e -> {
-			for (var icon : icons) {
-				icon.setSize(e.getValue());
+	private void toggleTheme(Button toggle) {
+		darkTheme = !darkTheme;
+		getUI().ifPresent(ui -> {
+			var themeList = ui.getElement().getThemeList();
+			if (darkTheme) {
+				themeList.add("dark");
+				toggle.setText("Light Mode");
+			} else {
+				themeList.remove("dark");
+				toggle.setText("Dark Mode");
 			}
 		});
+	}
+
+	private static String resolveColor(String label) {
+		for (var pair : PRESET_COLORS) {
+			if (pair[0].equals(label)) {
+				return pair[1];
+			}
+		}
+		return "";
 	}
 
 	private static String formatName(String name) {

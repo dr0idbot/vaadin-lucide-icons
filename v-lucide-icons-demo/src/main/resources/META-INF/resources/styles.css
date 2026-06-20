@@ -20,15 +20,15 @@ html {
 .controls-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--lumo-space-m);
+  gap: var(--vaadin-gap-m);
   align-items: baseline;
-  margin-bottom: var(--lumo-space-l);
+  margin-bottom: var(--vaadin-gap-l);
 }
 
 .icon-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--lumo-space-xs);
+  gap: var(--vaadin-gap-xs);
   width: 100%;
 }
 
@@ -37,25 +37,23 @@ html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 120px;
-  height: 90px;
-  padding: var(--lumo-space-s);
-  border: 1px solid var(--lumo-contrast-10pct);
-  border-radius: var(--lumo-border-radius-m);
-  box-sizing: border-box;
+  padding: var(--vaadin-padding-m);
+  border: 1px solid var(--vaadin-border-color-secondary);
+  border-radius: var(--vaadin-radius-m);
   transition: background-color 0.2s;
+  cursor: var(--vaadin-clickable-cursor);
 }
 
 .icon-card:hover {
-  background-color: var(--lumo-contrast-5pct);
+  background-color: var(--vaadin-background-container);
 }
 
 .icon-name {
-  font-size: var(--lumo-font-size-xxs);
+  font-size: 10px;
   line-height: 1.2;
   text-align: center;
   width: 100%;
-  color: var(--lumo-secondary-text-color);
+  color: var(--vaadin-text-color-secondary);
 }
 
 .theme-toggle {

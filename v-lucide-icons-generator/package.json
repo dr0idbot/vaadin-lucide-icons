@@ -1,0 +1,9 @@
+{
+  "name": "vaadin-lucide-icons-generator",
+  "version": "1.0.0-SNAPSHOT",
+  "private": true,
+  "description": "NPM packaging to resolve Lucide SVG assets for generation",
+  "dependencies": {
+    "lucide-static": "^0.470.0"
+  }
+}

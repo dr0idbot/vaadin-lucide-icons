@@ -1,36 +1,25 @@
 # Vaadin Lucide Icons
 
-[![CI Build](https://github.com/dr0idbot/vaadin-lucide-icons/actions/workflows/ci-build.yml/badge.svg)](https://github.com/dr0idbot/vaadin-lucide-icons/actions/workflows/ci-build.yml)
-
 Server-side [Lucide](https://lucide.dev) icon integration for Vaadin 24+ (Java 25).
-
-## Tech Stack
-
-- **Vaadin 25** — `<vaadin-icon>` web component via `SvgIcon`
-- **Java 25** — Multi-module Maven project
-- **Lucide** — Open-source icons (ISC license)
 
 ## Modules
 
 | Module | Purpose |
 |--------|---------|
-| `v-lucide-icons` | The icon library — enum, SVG icon component, factory. What consumers depend on. |
 | `v-lucide-icons-demo` | Spring Boot demo app to browse all icons. |
 | `v-lucide-icons-generator` | Reads Lucide SVGs from `node_modules` and regenerates the enum + SVG resources. |
 
-## Run After Cloning
+The released library (`io.github.dr0idbot:v-lucide-icons:1.0.0`) lives in its own repository at [`/home/droidbot/project-source/v-lucide-icons`](../v-lucide-icons).
+
+## Run Demo
 
 ```bash
-# Build the library (no demo)
-mvn -f v-lucide-icons/pom.xml install
-
-# Run the demo app
 mvn -pl v-lucide-icons-demo spring-boot:run
 ```
 
 Then open `http://localhost:8080`.
 
-## Usage
+## Adding the Dependency
 
 ```xml
 <dependency>
@@ -40,38 +29,7 @@ Then open `http://localhost:8080`.
 </dependency>
 ```
 
-```java
-// Create an icon
-LucideIcon.SAVE.create();
-
-// Customize
-var icon = LucideIcon.STAR.create();
-icon.setColor("#ff6b00");
-icon.setSize("48px");
-icon.setStrokeWidth(1.5);
-button.setIcon(icon);
-
-// Accessibility
-icon.setDecorative(true);                           // hide from screen readers
-icon.getElement().setAttribute("aria-label", "Star"); // labelled
-```
-
-### API
-
-| Method | Source | Description |
-|--------|--------|-------------|
-| `setColor(String)` | `SvgIcon` | Icon color via CSS `color` |
-| `setSize(String)` | `AbstractIcon` | Width and height (e.g. `"24px"`, `"2em"`) |
-| `setStrokeWidth(double)` | `LucideSvgIcon` | SVG stroke width |
-| `setDecorative(boolean)` | `LucideSvgIcon` | Mark as presentational |
-
-### Public Types
-
-- **`LucideIcon`** — enum of all icons
-- **`LucideSvgIcon`** — extends Vaadin's `SvgIcon`
-- **`LucideIconFactory`** — creates and validates icon instances
-
-## Updating Lucide Icons
+## Regenerating Icons
 
 When a new version of [lucide-static](https://www.npmjs.com/package/lucide-static) is published with more icons:
 
@@ -81,5 +39,10 @@ When a new version of [lucide-static](https://www.npmjs.com/package/lucide-stati
    ```
    mvn -pl v-lucide-icons-generator compile exec:java
    ```
-4. Verify the SVG and enum counts match
-5. Commit the regenerated files
+4. Copy the generated files to the standalone project:
+   ```bash
+   cp -r generated/resources/* ../v-lucide-icons/src/main/resources/
+   cp -r generated/java/* ../v-lucide-icons/src/main/java/
+   ```
+5. Verify the SVG and enum counts match
+6. Commit the regenerated files in the standalone project

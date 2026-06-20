@@ -39,3 +39,6 @@ node_modules/
 *.log
 resume
 release_guide.md
+
+# Generator output
+generated/

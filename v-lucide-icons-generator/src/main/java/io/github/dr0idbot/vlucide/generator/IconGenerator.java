@@ -45,8 +45,12 @@ public class IconGenerator {
 
 	public static void main(String[] args) throws Exception {
 		Path projectRoot = findProjectRoot();
-		Path resourcesDir = projectRoot.resolve("v-lucide-icons/src/main/resources");
-		Path javaDir = projectRoot.resolve("v-lucide-icons/src/main/java");
+		Path outputDir = projectRoot.resolve("generated");
+
+		Path resourcesDir = outputDir.resolve("resources");
+		Path javaDir = outputDir.resolve("java");
+
+		System.out.println("Writing generated files to: " + outputDir);
 
 		IconGenerator generator = new IconGenerator(resourcesDir, javaDir);
 		generator.run();

@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.ColorScheme;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
 
 import io.droidbot.vlucide.LucideIcon;
@@ -25,8 +25,14 @@ public class DemoView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private final List<LucideSvgIcon> icons = new ArrayList<>();
-	private boolean darkTheme = false;
+	private static final int PAGE_SIZE = 150;
+
+	private final List<LucideSvgIcon> allIcons = new ArrayList<>();
+	private final List<Div> allCards = new ArrayList<>();
+	private final Div grid = new Div();
+	private final Span pageInfo = new Span();
+	private int currentPage = 0;
+	private boolean darkTheme = true;
 
 	public DemoView() {
 		setSpacing(false);
@@ -45,9 +51,9 @@ public class DemoView extends VerticalLayout {
 		colorCombo.setValue(PresetColor.DEFAULT);
 		colorCombo.setWidth(140, Unit.PIXELS);
 
-		var sizeField = new TextField("Size (px)");
-		sizeField.setValue("40");
-		sizeField.setWidth("100px");
+		var sizeField = new NumberField("Size (px)");
+		sizeField.setValue(40D);
+		sizeField.setWidth(100, Unit.PIXELS);
 
 		var strokeSelect = new Select<Double>();
 		strokeSelect.setLabel("Stroke");
@@ -61,14 +67,35 @@ public class DemoView extends VerticalLayout {
 		controls.add(colorCombo, sizeField, strokeSelect, themeToggle);
 		add(controls);
 
-		var grid = new Div();
+		var pagination = new HorizontalLayout();
+		pagination.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+		pagination.getStyle().set("margin-bottom", "8px");
+
+		var prevBtn = new Button("Previous", e -> {
+			if (currentPage > 0) {
+				currentPage--;
+				renderPage();
+			}
+		});
+
+		var nextBtn = new Button("Next", e -> {
+			int totalPages = totalPages();
+			if (currentPage < totalPages - 1) {
+				currentPage++;
+				renderPage();
+			}
+		});
+
+		pagination.add(prevBtn, pageInfo, nextBtn);
+		add(pagination);
+
 		grid.addClassName("icon-grid");
 
 		for (LucideIcon icon : LucideIcon.values()) {
 			var svgIcon = icon.create();
 			svgIcon.setSize("40px");
 			svgIcon.setStrokeWidth(strokeSelect.getValue());
-			icons.add(svgIcon);
+			allIcons.add(svgIcon);
 
 			var card = new Div();
 			card.addClassName("icon-card");
@@ -77,48 +104,63 @@ public class DemoView extends VerticalLayout {
 			name.addClassName("icon-name");
 
 			card.add(svgIcon, name);
-			grid.add(card);
+			allCards.add(card);
 		}
 
 		add(grid);
+		renderPage();
 
 		colorCombo.addValueChangeListener(e -> {
 			var hex = e.getValue().getHex();
-			for (var icon : icons) {
+			for (var icon : allIcons) {
 				icon.setColor(hex);
 			}
 		});
 
 		sizeField.addValueChangeListener(e -> {
 			var val = e.getValue();
-			if (val != null && !val.isBlank()) {
-				for (var icon : icons) {
+			if (val != null) {
+				for (var icon : allIcons) {
 					icon.setSize(val + "px");
 				}
 			}
 		});
 
 		strokeSelect.addValueChangeListener(e -> {
-			for (var icon : icons) {
+			for (var icon : allIcons) {
 				icon.setStrokeWidth(e.getValue());
 			}
 		});
 	}
 
+	private void renderPage() {
+		grid.removeAll();
+		int totalPages = totalPages();
+		int start = currentPage * PAGE_SIZE;
+		int end = Math.min(start + PAGE_SIZE, allCards.size());
+
+		for (int i = start; i < end; i++) {
+			grid.add(allCards.get(i));
+		}
+
+		pageInfo.setText((currentPage + 1) + " / " + totalPages);
+	}
+
+	private int totalPages() {
+		return (int) Math.ceil((double) allCards.size() / PAGE_SIZE);
+	}
+
 	private void toggleTheme(Button toggle) {
-		darkTheme = !darkTheme;
 		getUI().ifPresent(ui -> {
-			var themeList = ui.getElement().getThemeList();
-			if (darkTheme) {
-				themeList.add("dark");
-				ui.getPage().setColorScheme(ColorScheme.DARK);
+			if (!darkTheme) {
+				ui.getPage().setColorScheme(ColorScheme.Value.DARK);
 				toggle.setText("Light Mode");
 			} else {
-				themeList.remove("dark");
-				ui.getPage().setColorScheme(ColorScheme.LIGHT);
+				ui.getPage().setColorScheme(ColorScheme.Value.LIGHT);
 				toggle.setText("Dark Mode");
 			}
 		});
+		darkTheme = !darkTheme;
 	}
 
 	private static String formatName(String name) {

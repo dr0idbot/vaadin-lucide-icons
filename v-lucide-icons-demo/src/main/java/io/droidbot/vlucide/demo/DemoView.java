@@ -33,7 +33,6 @@ public class DemoView extends VerticalLayout {
 	private final Div grid = new Div();
 	private final Span pageInfo = new Span();
 	private int currentPage = 0;
-	private boolean darkTheme = true;
 
 	public DemoView() {
 		setSpacing(false);
@@ -55,23 +54,23 @@ public class DemoView extends VerticalLayout {
 
 		colorCombo.setRenderer(new ComponentRenderer<>(color -> {
 
-		    HorizontalLayout layout = new HorizontalLayout();
-		    layout.addClassName("color-item");
+			HorizontalLayout layout = new HorizontalLayout();
+			layout.addClassName("color-item");
 
-		    Span swatch = new Span();
-		    swatch.addClassName("color-swatch");
+			Span swatch = new Span();
+			swatch.addClassName("color-swatch");
 
-		    if (color != PresetColor.DEFAULT) {
-		        swatch.getStyle().set("--color-value", color.getDisplayName());
-		        swatch.addClassName("color-swatch-filled");
-		    } else {
-		        swatch.addClassName("color-swatch-default");
-		    }
+			if (color != PresetColor.DEFAULT) {
+				swatch.getStyle().set("--color-value", color.getDisplayName());
+				swatch.addClassName("color-swatch-filled");
+			} else {
+				swatch.addClassName("color-swatch-default");
+			}
 
-		    Span label = new Span(color.getDisplayName());
+			Span label = new Span(color.getDisplayName());
 
-		    layout.add(swatch, label);
-		    return layout;
+			layout.add(swatch, label);
+			return layout;
 		}));
 
 		var sizeField = new NumberField("Size (px)");
@@ -174,15 +173,10 @@ public class DemoView extends VerticalLayout {
 
 	private void toggleTheme(Button toggle) {
 		getUI().ifPresent(ui -> {
-			if (!darkTheme) {
-				ui.getPage().setColorScheme(ColorScheme.Value.DARK);
-				toggle.setText("Light Mode");
-			} else {
-				ui.getPage().setColorScheme(ColorScheme.Value.LIGHT);
-				toggle.setText("Dark Mode");
-			}
+			boolean darkMode = ColorScheme.Value.DARK.equals(ui.getPage().getColorScheme());
+			ui.getPage().setColorScheme(darkMode ? ColorScheme.Value.LIGHT : ColorScheme.Value.DARK);
+			toggle.setIcon(darkMode ? LucideIcon.SUN.create() : LucideIcon.MOON.create());
 		});
-		darkTheme = !darkTheme;
 	}
 
 	private static String formatName(String name) {

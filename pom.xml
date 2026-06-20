@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
     <name>Vaadin Lucide Icons (Parent)</name>
     <description>Lucide icon integration for Vaadin 24+</description>
-    <url>https://github.com/droidbot/vaadin-lucide-icons</url>
+    <url>https://github.com/droidbot-ind/vaadin-lucide-icons</url>
 
     <properties>
         <vaadin.version>25.1.8</vaadin.version>
@@ -34,21 +34,21 @@
 
     <developers>
         <developer>
-            <name>DroidBot</name>
-            <email>dev@droidbot.io</email>
+            <name>droidbot-ind</name>
+            <email>droidbot@proton.me</email>
         </developer>
     </developers>
 
     <scm>
-        <url>https://github.com/droidbot/vaadin-lucide-icons</url>
-        <connection>scm:git:git://github.com/droidbot/vaadin-lucide-icons.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:droidbot/vaadin-lucide-icons.git</developerConnection>
+        <url>https://github.com/droidbot-ind/vaadin-lucide-icons</url>
+        <connection>scm:git:git://github.com/droidbot-ind/vaadin-lucide-icons.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:droidbot-ind/vaadin-lucide-icons.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/droidbot/vaadin-lucide-icons/issues</url>
+        <url>https://github.com/droidbot-ind/vaadin-lucide-icons/issues</url>
     </issueManagement>
 
     <distributionManagement>

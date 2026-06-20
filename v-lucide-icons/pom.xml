@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
     <name>Vaadin Lucide Icons</name>
     <description>Lucide icon integration for Vaadin - provides LucideIcon enum and LucideSvgIcon component</description>
-    <url>https://github.com/droidbot/vaadin-lucide-icons</url>
+    <url>https://github.com/droidbot-ind/vaadin-lucide-icons</url>
 
     <dependencyManagement>
         <dependencies>

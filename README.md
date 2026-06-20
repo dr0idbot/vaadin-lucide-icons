@@ -1,6 +1,6 @@
 # Vaadin Lucide Icons
 
-[![CI Build](https://github.com/droidbot/vaadin-lucide-icons/actions/workflows/ci-build.yml/badge.svg)](https://github.com/droidbot/vaadin-lucide-icons/actions/workflows/ci-build.yml)
+[![CI Build](https://github.com/droidbot-ind/vaadin-lucide-icons/actions/workflows/ci-build.yml/badge.svg)](https://github.com/droidbot-ind/vaadin-lucide-icons/actions/workflows/ci-build.yml)
 
 Server-side Lucide icon integration for Vaadin 24+.
 
